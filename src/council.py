@@ -27,7 +27,7 @@ class CouncilMember:
         self.name = name
         self.base_url = base_url.rstrip('/')
         self.model = model
-        self.timeout = 120  # Increased timeout for longer generations
+        self.timeout = 600  # Increased timeout for longer generations
 
     def is_alive(self) -> bool:
         """Check if the Ollama instance is reachable."""

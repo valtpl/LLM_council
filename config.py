@@ -4,13 +4,13 @@
 # If you are running the Streamlit app on one PC but the models are on another PC (Server),
 # set this to the Server's IP address. e.g., "http://192.168.1.15:11434"
 # If everything is on the same machine, keep it as "http://localhost:11434"
-OLLAMA_SERVER_URL = "http://localhost:11434"
+OLLAMA_SERVER_URL = "http://172.20.10.9:11434"
 
 COUNCIL_MEMBERS_CONFIG = [
     {
         "name": "Member_1",
         "api_url": OLLAMA_SERVER_URL,
-        "model": "llama3"
+        "model": "llama3.2:1b"
     },
     {
         "name": "Member_2",
@@ -27,5 +27,5 @@ COUNCIL_MEMBERS_CONFIG = [
 CHAIRMAN_CONFIG = {
     "name": "Chairman",
     "api_url": OLLAMA_SERVER_URL, 
-    "model": "llama3"
+    "model": "llama3.2:1b"
 }
