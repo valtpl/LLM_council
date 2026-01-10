@@ -15,6 +15,10 @@ This application orchestrates a council of Local LLMs (via Ollama) to provide hi
 2.  **Peer Review:** Models anonymously review and rank each other's answers for accuracy and insight.
 3.  **Synthesis:** A designated "Chairman" model analyzes the opinions and reviews to generate a final, comprehensive verdict.
 
+The system supports two deployment modes:
+- **Local Mode**: Run all models on a single machine (ideal for testing)
+- **Distributed Mode**: Run models across multiple machines on a network (optimal performance)
+
 ## Setup & Installation
 
 ### Prerequisites
@@ -111,6 +115,77 @@ On the main machine where you will run the Streamlit app:
     ```
 2.  In the sidebar, select **Deployment Mode: Distributed (Network)**.
 3.  Click **Initialize Distributed Council**.
+
+## Technical Report
+
+### Key Design Decisions
+
+#### 1. Architecture: Council-Based Consensus
+The system implements a multi-agent architecture inspired by Andrej Karpathy's LLM Council concept. Key design principles:
+- **Three-Stage Pipeline**: The workflow is divided into Opinion Generation, Peer Review, and Chairman Synthesis to ensure comprehensive analysis
+- **Concurrent Execution**: Uses Python's `concurrent.futures.ThreadPoolExecutor` to parallelize API calls to different models, significantly reducing response time
+- **Flexible Deployment**: Supports both local and distributed modes to accommodate different hardware configurations
+
+#### 2. Error Handling & Health Monitoring
+- **Health Checks**: Before running queries, the system pings all nodes to verify availability
+- **Timeout Management**: Extended timeout (600s) for model generation to handle complex queries
+- **Graceful Degradation**: If a model fails to respond, the system continues with available models rather than failing completely
+
+#### 3. User Interface
+- **Streamlit Framework**: Chosen for its simplicity and real-time feedback capabilities
+- **Dynamic Model Selection**: In local mode, the UI automatically detects available Ollama models
+- **Configuration Management**: Separate `config.py` file for easy network configuration in distributed mode
+
+### Chosen LLM Models
+
+The system is model-agnostic and works with any models available through Ollama. Default configuration includes:
+
+1. **Council Members**:
+   - **Llama 3.2 (1B)**: Lightweight model providing quick responses with good general knowledge
+   - **Mistral**: Strong reasoning capabilities and concise answers
+   - **Phi-3**: Microsoft's efficient model with excellent instruction-following
+
+2. **Chairman**:
+   - **Llama 3.2 (1B)**: Chosen for synthesis due to its balanced performance and ability to process longer context from multiple opinions
+
+**Model Selection Rationale**:
+- **Diversity**: Different model architectures (Meta, Mistral AI, Microsoft) provide varied perspectives
+- **Resource Efficiency**: 1B and small models allow running on consumer hardware
+- **Customizable**: Users can select any Ollama-compatible models through the UI
+
+### Improvements Over Original Repository
+
+This implementation builds upon the LLM Council concept with several enhancements:
+
+1. **Dual Deployment Mode**:
+   - Added local mode for single-machine testing
+   - Maintained distributed mode for network deployment
+   - Dynamic switching between modes without code changes
+
+2. **Interactive Web Interface**:
+   - Replaced command-line interface with user-friendly Streamlit UI
+   - Real-time progress tracking during the three stages
+   - Visual feedback with expandable sections for opinions and reviews
+
+3. **Better Configuration Management**:
+   - Centralized configuration in `config.py`
+   - Dynamic model discovery in local mode
+   - Clear separation between local and network settings
+
+4. **Enhanced Robustness**:
+   - Health monitoring system to detect unavailable nodes
+   - Increased timeouts for more complex queries
+   - Better error messages and user feedback
+
+5. **Concurrent Processing**:
+   - Parallel API calls to all models simultaneously
+   - Significant performance improvement over sequential execution
+   - Efficient resource utilization
+
+6. **Improved Prompt Engineering**:
+   - Structured prompts for each stage (opinion, review, synthesis)
+   - System prompts tailored to each role (expert, reviewer, chairman)
+   - Better context management for the Chairman's synthesis
 
 ## Generative AI Usage Statement
 *   **Tools Used:** GitHub Copilot / Gemini
