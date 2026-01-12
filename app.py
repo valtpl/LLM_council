@@ -1,9 +1,89 @@
 import streamlit as st
 import time
+import io
+from datetime import datetime
+from fpdf import FPDF
 from src.council import CouncilMember, CouncilOrchestrator, Chairman, get_available_models, PerformanceMetrics
 from config import COUNCIL_MEMBERS_CONFIG, CHAIRMAN_CONFIG
 
 st.set_page_config(page_title="Local LLM Council", layout="wide")
+
+# --- PDF Report Generation ---
+class CouncilPDF(FPDF):
+    """Custom PDF class for Council reports."""
+    
+    def header(self):
+        self.set_font('Helvetica', 'B', 16)
+        self.cell(0, 10, 'LLM Council Report', align='C', new_x='LMARGIN', new_y='NEXT')
+        self.set_font('Helvetica', '', 10)
+        self.cell(0, 6, f'Generated: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}', align='C', new_x='LMARGIN', new_y='NEXT')
+        self.ln(5)
+    
+    def footer(self):
+        self.set_y(-15)
+        self.set_font('Helvetica', 'I', 8)
+        self.cell(0, 10, f'Page {self.page_no()}', align='C')
+
+    def chapter_title(self, title):
+        self.set_font('Helvetica', 'B', 14)
+        self.set_fill_color(230, 230, 250)
+        self.cell(0, 10, title, fill=True, new_x='LMARGIN', new_y='NEXT')
+        self.ln(3)
+    
+    def chapter_body(self, body):
+        self.set_font('Helvetica', '', 11)
+        # Handle encoding issues
+        safe_body = body.encode('latin-1', 'replace').decode('latin-1')
+        self.multi_cell(0, 6, safe_body)
+        self.ln(5)
+    
+    def add_section(self, title, content):
+        self.chapter_title(title)
+        self.chapter_body(content)
+
+
+def generate_pdf_report(query, opinions, reviewed_opinions, final_answer, performance_data):
+    """Generate a PDF report of the council session."""
+    pdf = CouncilPDF()
+    pdf.add_page()
+    
+    # 1. Query Section
+    pdf.add_section("Original Query", query)
+    
+    # 2. Stage 1: Individual Opinions
+    pdf.chapter_title("Stage 1: Council Member Opinions")
+    for i, op in enumerate(opinions):
+        pdf.set_font('Helvetica', 'B', 12)
+        pdf.cell(0, 8, f"{op.member_name} ({op.latency_ms:.0f}ms)", new_x='LMARGIN', new_y='NEXT')
+        pdf.chapter_body(op.content)
+    
+    # 3. Stage 2: Peer Reviews
+    pdf.add_page()
+    pdf.chapter_title("Stage 2: Peer Reviews")
+    for op in reviewed_opinions:
+        if op.reviews:
+            pdf.set_font('Helvetica', 'B', 12)
+            pdf.cell(0, 8, f"Reviews for {op.member_name}'s Answer:", new_x='LMARGIN', new_y='NEXT')
+            for rev in op.reviews:
+                pdf.chapter_body(rev)
+    
+    # 4. Stage 3: Final Synthesis
+    pdf.add_page()
+    pdf.add_section("Stage 3: Chairman's Final Verdict", final_answer)
+    
+    # 5. Performance Summary
+    pdf.chapter_title("Performance Summary")
+    perf_text = f"""
+Stage 1 (Opinions): {performance_data['stage1']:.1f}s
+Stage 2 (Peer Review): {performance_data['stage2']:.1f}s
+Stage 3 (Chairman Synthesis): {performance_data['stage3']:.1f}s
+Total Time: {performance_data['total']:.1f}s
+Number of Opinions: {performance_data['num_opinions']}
+    """
+    pdf.chapter_body(perf_text)
+    
+    # Return as bytes
+    return bytes(pdf.output())
 
 
 
@@ -408,6 +488,34 @@ if st.session_state.orchestrator:
                 st.markdown("---")
                 st.markdown("### 🎓 Chairman's Synthesis")
                 st.markdown(final_answer)
+                
+                # --- PDF Export ---
+                st.markdown("---")
+                st.markdown("### 📄 Export Report")
+                
+                performance_data = {
+                    'stage1': stage1_time / 1000,
+                    'stage2': stage2_time / 1000,
+                    'stage3': chairman_latency / 1000,
+                    'total': total_time / 1000,
+                    'num_opinions': len(opinions)
+                }
+                
+                pdf_bytes = generate_pdf_report(
+                    query, 
+                    opinions, 
+                    reviewed_opinions, 
+                    final_answer, 
+                    performance_data
+                )
+                
+                st.download_button(
+                    label="📥 Download PDF Report",
+                    data=pdf_bytes,
+                    file_name=f"council_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf",
+                    mime="application/pdf",
+                    help="Download a complete report of this council session"
+                )
                 
             # Update health status to refresh metrics
             st.session_state.health_status = orch.check_health()
