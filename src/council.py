@@ -203,9 +203,6 @@ class CouncilOrchestrator:
             
             if not others_opinions:
                 continue
-
-            # We can either ask them to rank all, or review one by one. 
-            # To save context window and complexity, let's have them review the set and provide a ranking.
             
             candidates_text = ""
             for i, op in enumerate(others_opinions):
@@ -240,18 +237,6 @@ class CouncilOrchestrator:
             for future in concurrent.futures.as_completed(futures):
                 reviewer_name, review_text = future.result()
                 if review_text:
-                    # Attach this review to the opinions. 
-                    # Since the review text contains rankings for multiple opinions, 
-                    # we'll just attach the full review text to the *first* opinion or handle it differently.
-                    # A better way for the Chairman to see it is to attach it to the opinions or just pass it to Stage 3.
-                    # For simplicity in this data structure, let's append the review to ALL opinions involved, 
-                    # or better, let's just store it in the Opinion objects? 
-                    # Actually, the Opinion object stores reviews *received*.
-                    
-                    # We need to parse "Candidate Answer X" back to the specific opinion.
-                    # This is brittle with LLMs. 
-                    # Alternative: Just append the reviewer's full analysis to every opinion's 'reviews' list 
-                    # so the Chairman sees it.
                     
                     for op in opinions:
                         if op.member_name != reviewer_name:
