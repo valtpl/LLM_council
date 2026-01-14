@@ -187,6 +187,53 @@ This implementation builds upon the LLM Council concept with several enhancement
    - System prompts tailored to each role (expert, reviewer, chairman)
    - Better context management for the Chairman's synthesis
 
-## Generative AI Usage Statement
-*   **Tools Used:** GitHub Copilot / Gemini
-*   **Purpose:** Used for code scaffolding, refactoring the orchestrator logic, and generating the Streamlit UI structure.
+## Generative AI Usage & Penalties Statement
+
+### Declaration of Generative AI Usage
+
+This project was developed with the assistance of Generative AI tools, in full compliance with academic guidelines. We declare the following usage:
+
+**Tools Used:**
+- **GitHub Copilot (Claude Sonnet 4.5)** - Primary AI assistant
+- **Gemini** - Supplementary research and clarification
+
+**Purpose & Methodology:**
+
+1. **Initial Understanding & Planning (15% of work)**
+   - Used AI to analyze and break down project requirements
+   - Clarified the LLM Council concept and architectural patterns
+   - Explored different implementation strategies and best practices
+
+2. **Code Development (60% of work)**
+   - **Core Architecture**: AI-assisted implementation of the three-stage pipeline (opinion generation, peer review, synthesis)
+   - **Concurrent Processing**: Guidance on using `ThreadPoolExecutor` for parallel API calls
+   - **API Integration**: Assistance with Ollama API communication and error handling
+   - **UI Development**: Streamlit interface scaffolding and real-time feedback implementation
+   - **Configuration Management**: Design of flexible local/distributed deployment system
+
+3. **Debugging & Optimization (15% of work)**
+   - Troubleshooting network connectivity issues in distributed mode
+   - Refining timeout handling and health check mechanisms
+   - Optimizing prompt engineering for better model responses
+
+4. **Documentation (10% of work)**
+   - Structuring the README with clear setup instructions
+   - Writing technical explanations of design decisions
+   - Creating comprehensive user guides for both deployment modes
+
+**Human Contribution:**
+- Final design decisions and architectural choices
+- Testing across local and distributed environments
+- Network configuration and deployment validation
+- Integration and refinement of AI-generated code
+- Quality assurance and user experience optimization
+
+### Transparency Commitment
+
+We acknowledge that transparency is mandatory when using Generative AI tools. This project demonstrates:
+- ✅ **Full disclosure** of all AI tools used
+- ✅ **Clear explanation** of how and why AI was utilized
+- ✅ **Understanding** of the implemented code and concepts
+- ✅ **Responsible usage** as a learning and productivity tool
+
+We understand that failure to declare Generative AI usage would result in severe penalties, and we commit to maintaining academic integrity throughout this project.
