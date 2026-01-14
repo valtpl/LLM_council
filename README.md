@@ -2,6 +2,8 @@
 
 A distributed multi-LLM system where multiple local models collaborate to answer queries, review each other's work, and synthesize a final answer via a Chairman model. Inspired by Andrej Karpathy's LLM Council concept.
 
+**Repository:** https://github.com/valtpl/LLM_council
+
 ## Team Information
 *   **TD Group:** CDOF4
 *   **Members:**
@@ -88,33 +90,20 @@ By default, Ollama only listens to `localhost`. You must enable it to listen to 
     ```
 3.  Find the machine's Local IP address (e.g., `ipconfig` on Windows or `ifconfig` on Mac/Linux).
 
-#### 2. Configure the Chairman (Orchestrator)
-On the main machine where you will run the Streamlit app:
+#### 2. Run the App and Configure Network Members
+On the main machine (Chairman):
 
-1.  Open `config.py`.
-2.  Update `COUNCIL_MEMBERS_CONFIG` with the IP addresses and models of your member machines.
-    ```python
-    COUNCIL_MEMBERS_CONFIG = [
-        {
-            "name": "Alex's Laptop",
-            "api_url": "http://192.168.1.15:11434", # IP of Member 1
-            "model": "llama3"
-        },
-        {
-            "name": "Desktop PC",
-            "api_url": "http://192.168.1.20:11434", # IP of Member 2
-            "model": "mistral"
-        }
-    ]
-    ```
-
-#### 3. Run the App
-1.  Start the app on the Chairman machine:
+1.  Start the Streamlit application:
     ```bash
     streamlit run app.py
     ```
 2.  In the sidebar, select **Deployment Mode: Distributed (Network)**.
-3.  Click **Initialize Distributed Council**.
+3.  Enter the IP addresses and models of your member machines directly in the Streamlit interface:
+    - **Member Name**: A descriptive name (e.g., "Alex's Laptop")
+    - **API URL**: The network address with port (e.g., `http://192.168.1.15:11434`)
+    - **Model**: The Ollama model running on that machine (e.g., `llama3`, `mistral`)
+4.  Add all your council members using the interface.
+5.  Click **Initialize Distributed Council** to start the system.
 
 ## Technical Report
 
@@ -133,8 +122,8 @@ The system implements a multi-agent architecture inspired by Andrej Karpathy's L
 
 #### 3. User Interface
 - **Streamlit Framework**: Chosen for its simplicity and real-time feedback capabilities
-- **Dynamic Model Selection**: In local mode, the UI automatically detects available Ollama models
-- **Configuration Management**: Separate `config.py` file for easy network configuration in distributed mode
+- **Dynamic Model Selection**: The UI automatically detects available Ollama models in both modes
+- **Interactive Configuration**: In distributed mode, users can configure member machines directly through the web interface without editing code
 
 ### Chosen LLM Models
 
@@ -146,7 +135,7 @@ The system is model-agnostic and works with any models available through Ollama.
    - **Phi-3**: Microsoft's efficient model with excellent instruction-following
 
 2. **Chairman**:
-   - **Llama 3.2 (1B)**: Chosen for synthesis due to its balanced performance and ability to process longer context from multiple opinions
+   - **Mistral 7B**: Chosen for synthesis due to its superior reasoning capabilities, strong performance in aggregating multiple perspectives, and excellent ability to process longer context from multiple opinions
 
 **Model Selection Rationale**:
 - **Diversity**: Different model architectures (Meta, Mistral AI, Microsoft) provide varied perspectives
@@ -221,7 +210,7 @@ This project was developed with the assistance of Generative AI tools, in full c
    - Writing technical explanations of design decisions
    - Creating comprehensive user guides for both deployment modes
 
-**Human Contribution:**
+**Our Contribution:**
 - Final design decisions and architectural choices
 - Testing across local and distributed environments
 - Network configuration and deployment validation
