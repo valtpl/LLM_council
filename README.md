@@ -217,12 +217,4 @@ This project was developed with the assistance of Generative AI tools, in full c
 - Integration and refinement of AI-generated code
 - Quality assurance and user experience optimization
 
-### Transparency Commitment
 
-We acknowledge that transparency is mandatory when using Generative AI tools. This project demonstrates:
-- ✅ **Full disclosure** of all AI tools used
-- ✅ **Clear explanation** of how and why AI was utilized
-- ✅ **Understanding** of the implemented code and concepts
-- ✅ **Responsible usage** as a learning and productivity tool
-
-We understand that failure to declare Generative AI usage would result in severe penalties, and we commit to maintaining academic integrity throughout this project.
